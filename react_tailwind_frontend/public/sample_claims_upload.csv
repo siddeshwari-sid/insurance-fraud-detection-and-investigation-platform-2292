@@ -1,0 +1,9 @@
+claim_id,policy_id,customer_id,customer_name,date_of_loss,reported_date,loss_amount,claim_type,incident_description,incident_city,incident_state,provider_name
+CLM-2024-0001,POL-100238,CUST-009813,Jordan Mitchell,2024-01-12,2024-01-13,18450.75,auto,"Rear-end collision reported at low speed; inconsistent damage photos provided.",Phoenix,AZ,"Desert Valley Auto Body"
+CLM-2024-0002,POL-100982,CUST-004102,Avery Chen,2024-02-03,2024-02-04,1250.00,property,"Kitchen water leak claimed; prior similar claim within 60 days noted in narrative.",Austin,TX,"Lone Star Restoration"
+CLM-2024-0003,POL-101554,CUST-001774,Sofia Ramirez,2024-02-18,2024-02-18,9800.00,health,"ER visit for minor sprain; billing includes extensive imaging and multiple specialist consults.",Miami,FL,"Sunrise Medical Center"
+CLM-2024-0004,POL-099771,CUST-008221,Noah Williams,2024-03-01,2024-03-10,43200.00,auto,"Vehicle theft reported; claimant retains both keys; location data shows vehicle near residence.",Chicago,IL,"Great Lakes Towing & Recovery"
+CLM-2024-0005,POL-102201,CUST-002590,Priya Patel,2024-03-22,2024-03-23,620.40,property,"Wind damage to fence; clear photos; contractor estimate aligns with local pricing.",Raleigh,NC,"Carolina Home Repair"
+CLM-2024-0006,POL-101019,CUST-000615,Ethan Brooks,2024-04-07,2024-04-08,27500.00,auto,"Single-car accident; claimant states no alcohol; police report indicates DUI suspicion and late reporting.",Las Vegas,NV,"Silver State Collision"
+CLM-2024-0007,POL-103045,CUST-006430,Mia Thompson,2024-04-20,2024-04-20,14300.00,health,"Short inpatient stay; procedure billed under unusually high-cost codes; provider flagged in prior audits.",San Diego,CA,"Pacific Care Hospital"
+CLM-2024-0008,POL-103512,CUST-003306,Samuel Johnson,2024-05-09,2024-05-11,51000.00,property,"Fire loss claim; origin unknown; accelerant mentioned in adjuster notes; recent policy inception.",Columbus,OH,"Buckeye Fire & Restoration"
