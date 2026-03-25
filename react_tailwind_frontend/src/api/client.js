@@ -70,11 +70,22 @@ export const api = {
   },
 
   /** PUBLIC_INTERFACE
-   * List claims with optional query params (backend may ignore unknown params).
-   * @param {{q?:string, risk?:string, status?:string, sort?:string, order?:string, limit?:number, offset?:number}} params
+   * List claims with optional query params.
+   * Frontend uses { q, risk } but backend expects { claim_number, risk_band }.
+   * @param {{q?:string, risk?:string, status?:string, limit?:number, offset?:number, risk_band?:string, claim_number?:string}} params
    */
   async listClaims(params) {
-    return request(`/api/claims${toQuery(params)}`, { method: "GET" });
+    const mapped = {
+      ...params,
+      // map legacy UI query keys -> backend-supported keys
+      claim_number: params?.claim_number ?? params?.q,
+      risk_band: params?.risk_band ?? params?.risk
+    };
+    // Avoid sending UI-only keys that backend doesn't recognize.
+    delete mapped.q;
+    delete mapped.risk;
+
+    return request(`/api/claims${toQuery(mapped)}`, { method: "GET" });
   },
 
   /** PUBLIC_INTERFACE
@@ -100,10 +111,12 @@ export const api = {
 
   /** PUBLIC_INTERFACE
    * Queue endpoint for investigator triage.
-   * @param {{risk?:string, status?:string}} params
+   * Backend supports limit/offset. (Filtering can be added server-side later.)
+   * @param {{limit?:number, offset?:number}} params
    */
   async getQueue(params) {
-    return request(`/api/queue${toQuery(params)}`, { method: "GET" });
+    const { limit, offset } = params || {};
+    return request(`/api/queue${toQuery({ limit, offset })}`, { method: "GET" });
   },
 
   /** PUBLIC_INTERFACE
