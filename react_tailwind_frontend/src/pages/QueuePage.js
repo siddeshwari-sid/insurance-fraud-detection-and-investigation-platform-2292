@@ -3,6 +3,7 @@ import { AppLayout } from "../components/AppLayout";
 import { ClaimsTable } from "../components/ClaimsTable";
 import { ClaimDetailModal } from "../components/ClaimDetailModal";
 import { Button } from "../components/Button";
+import { RetryState } from "../components/RetryState";
 import { api } from "../api/client";
 import {
   normalizeClaimsResponse,
@@ -16,6 +17,7 @@ export function QueuePage() {
   const [loading, setLoading] = useState(true);
   const [claims, setClaims] = useState([]);
   const [error, setError] = useState("");
+  const [rawError, setRawError] = useState(null);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [activeClaim, setActiveClaim] = useState(null);
@@ -25,11 +27,14 @@ export function QueuePage() {
   const load = async () => {
     setLoading(true);
     setError("");
+    setRawError(null);
     try {
       const res = await api.getQueue();
-      setClaims(normalizeClaimsResponse(res));
+      setClaims(normalizeClaimsResponse(res || []));
     } catch (e) {
+      setRawError(e);
       setError(e?.message || String(e));
+      setClaims([]);
     } finally {
       setLoading(false);
     }
@@ -82,11 +87,22 @@ export function QueuePage() {
         </Button>
       }
     >
-      {error && (
-        <div className="mb-4 rounded-xl bg-red-50 p-3 text-sm text-red-700 ring-1 ring-red-200">
-          {error}
-        </div>
-      )}
+      <div className="mb-4">
+        <RetryState
+          error={rawError}
+          onRetry={load}
+          title="Queue unavailable"
+          description="We couldn’t load the investigator queue from the backend."
+        />
+        {!rawError && !loading && claims.length === 0 && (
+          <RetryState
+            empty
+            onRetry={load}
+            emptyTitle="Queue is empty"
+            emptyDescription="No claims are currently available. Upload a CSV to ingest claims, then refresh."
+          />
+        )}
+      </div>
 
       {loading ? (
         <div className="py-12 text-center text-sm text-slate-500">Loading…</div>

@@ -72,7 +72,8 @@ export function AppLayout({ title, children, right }) {
           <div className="mt-4 text-xs text-slate-500">
             Backend:{" "}
             <span className="font-medium text-slate-700">
-              {process.env.REACT_APP_API_BASE ||
+              {process.env.REACT_APP_API_BASE_URL ||
+                process.env.REACT_APP_API_BASE ||
                 process.env.REACT_APP_BACKEND_URL ||
                 process.env.REACT_APP_API_URL ||
                 "not set"}

@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { AppLayout } from "../components/AppLayout";
 import { Badge } from "../components/Badge";
 import { Button } from "../components/Button";
+import { RetryState } from "../components/RetryState";
 import { api } from "../api/client";
 import { normalizeSummaryResponse } from "../utils/claims";
 
@@ -26,18 +27,33 @@ export function DashboardPage() {
   const [summary, setSummary] = useState({});
   const [error, setError] = useState("");
 
+  const [rawError, setRawError] = useState(null);
+
   const load = async () => {
     setLoading(true);
     setError("");
+    setRawError(null);
     try {
       const res = await api.getSummary();
-      setSummary(normalizeSummaryResponse(res));
+      // null => empty/blank response. Normalize to {} so UI can show empty state.
+      setSummary(normalizeSummaryResponse(res || {}));
     } catch (e) {
+      setRawError(e);
       setError(e?.message || String(e));
+      setSummary({});
     } finally {
       setLoading(false);
     }
   };
+
+  const isEmpty = useMemo(() => {
+    const s = summary || {};
+    const totalVal = s.total_claims ?? s.total;
+    // Consider empty when no totals are present or total == 0
+    if (totalVal == null) return true;
+    const n = Number(totalVal);
+    return Number.isFinite(n) ? n === 0 : false;
+  }, [summary]);
 
   useEffect(() => {
     load();
@@ -58,11 +74,22 @@ export function DashboardPage() {
         </Button>
       }
     >
-      {error && (
-        <div className="mb-4 rounded-xl bg-red-50 p-3 text-sm text-red-700 ring-1 ring-red-200">
-          {error}
-        </div>
-      )}
+      <div className="mb-4">
+        <RetryState
+          error={rawError}
+          onRetry={load}
+          title="Dashboard summary unavailable"
+          description="We couldn’t load the dashboard summary from the backend."
+        />
+        {!rawError && !loading && (
+          <RetryState
+            empty={isEmpty}
+            onRetry={load}
+            emptyTitle="No claims ingested yet"
+            emptyDescription="Upload a CSV to ingest claims and generate fraud scores, then refresh this dashboard."
+          />
+        )}
+      </div>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard label="Total claims" value={total} hint="All" color="slate" />
