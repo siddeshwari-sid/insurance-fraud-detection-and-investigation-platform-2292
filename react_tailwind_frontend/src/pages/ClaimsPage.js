@@ -4,7 +4,11 @@ import { ClaimsTable } from "../components/ClaimsTable";
 import { ClaimDetailModal } from "../components/ClaimDetailModal";
 import { Button } from "../components/Button";
 import { api } from "../api/client";
-import { normalizeClaimsResponse } from "../utils/claims";
+import {
+  normalizeClaimsResponse,
+  normalizeClaimDetailResponse,
+  mapUiOutcomeToBackend
+} from "../utils/claims";
 
 // PUBLIC_INTERFACE
 export function ClaimsPage() {
@@ -40,9 +44,9 @@ export function ClaimsPage() {
     setActiveError("");
     setActiveLoading(true);
     try {
-      const id = row?.id || row?.claim_id;
+      const id = row?.id || row?.claim_id || row?.claim_number;
       const detail = await api.getClaim(id);
-      setActiveClaim(detail?.claim || detail?.data || detail);
+      setActiveClaim(normalizeClaimDetailResponse(detail));
     } catch (e) {
       setActiveError(e?.message || String(e));
       setActiveClaim(row);
@@ -56,10 +60,10 @@ export function ClaimsPage() {
     setActiveLoading(true);
     setActiveError("");
     try {
-      const id = activeClaim?.id || activeClaim?.claim_id;
-      await api.setOutcome(id, { outcome, notes });
+      const id = activeClaim?.id || activeClaim?.claim_id || activeClaim?.claim_number;
+      await api.setOutcome(id, { outcome: mapUiOutcomeToBackend(outcome), notes });
       const detail = await api.getClaim(id);
-      setActiveClaim(detail?.claim || detail?.data || detail);
+      setActiveClaim(normalizeClaimDetailResponse(detail));
       await load();
     } catch (e) {
       setActiveError(e?.message || String(e));
