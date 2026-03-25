@@ -1,7 +1,26 @@
 /** Map numeric score into risk bands used across UI. */
-export function riskBand(score) {
-  const s = Number(score);
-  if (Number.isNaN(s)) return { key: "unknown", label: "Unknown", color: "slate" };
+export function riskBand(score, explicitBand) {
+  /**
+   * Determine a risk band for display/filtering.
+   *
+   * The backend stores risk_score in [0..1] and also returns risk_band as
+   * 'low'|'medium'|'high'. The UI historically used a 0..100 score.
+   *
+   * This helper is intentionally tolerant:
+   * - If explicitBand is provided, it wins (prevents scale mismatches).
+   * - If score is in 0..1, it is treated as a fraction and scaled to 0..100.
+   */
+  const b = String(explicitBand || "").trim().toLowerCase();
+  if (b === "high") return { key: "high", label: "High", color: "red" };
+  if (b === "medium") return { key: "medium", label: "Medium", color: "amber" };
+  if (b === "low") return { key: "low", label: "Low", color: "emerald" };
+
+  const raw = Number(score);
+  if (Number.isNaN(raw)) return { key: "unknown", label: "Unknown", color: "slate" };
+
+  // Accept both 0..1 and 0..100 input scales.
+  const s = raw <= 1 ? raw * 100 : raw;
+
   if (s >= 80) return { key: "high", label: "High", color: "red" };
   if (s >= 50) return { key: "medium", label: "Medium", color: "amber" };
   return { key: "low", label: "Low", color: "emerald" };

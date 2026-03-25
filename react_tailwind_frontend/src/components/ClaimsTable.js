@@ -36,7 +36,7 @@ export function ClaimsTable({ claims, onSelect }) {
   const filtered = useMemo(() => {
     const query = q.trim().toLowerCase();
     return (claims || []).filter((c) => {
-      const band = riskBand(c.fraud_score);
+      const band = riskBand(c.fraud_score, c.risk_band);
       const matchRisk = risk === "all" ? true : band.key === risk;
       const haystack = [
         c.id,
@@ -164,7 +164,7 @@ export function ClaimsTable({ claims, onSelect }) {
           </thead>
           <tbody className="divide-y divide-slate-100 bg-white">
             {sorted.map((c) => {
-              const band = riskBand(c.fraud_score);
+              const band = riskBand(c.fraud_score, c.risk_band);
               const riskColor =
                 band.key === "high"
                   ? "red"
