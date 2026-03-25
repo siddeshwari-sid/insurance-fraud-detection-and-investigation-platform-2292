@@ -1,1 +1,3 @@
-# insurance-fraud-detection-and-investigation-platform-2292
+# Project Repository
+
+This is the initial README file for the project.
